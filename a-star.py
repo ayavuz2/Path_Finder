@@ -52,6 +52,9 @@ class Spot:
 	def reset(self):
 		return self.color == WHITE
 
+	def  make_start(self):
+		self.color = ORANGE
+
 	def make_closed(self):
 		self.clor = RED
 
@@ -59,10 +62,10 @@ class Spot:
 		self.color == GREEN
 
 	def make_barrier(self):
-		self.color == BLACK
+		self.color = BLACK
 
 	def make_end(self):
-		self.color = PURPLE
+		self.color = TURQUOISE
 
 	def make_path(self):
 		self.color = PURPLE
@@ -109,10 +112,62 @@ def draw(win, grid, rows, width):
 	win.fill(WHITE)
 
 	for row in grid:
-		for spot in rows:
+		for spot in row:
 			spot.draw(win)
 
 	draw_grid(win, rows, width)
 	pygame.display.update()
 
-	
+
+def get_clicked_pos(pos, rows, width):
+	gap = width // rows
+	y, x = pos
+
+	row = y//gap
+	col = x//gap
+
+	return row, col
+
+
+def main(win, width):
+	ROWS = 50 # how many cubes you want in your grid
+	grid = make_grid(ROWS, width)
+
+	start = None
+	end = None
+
+	run = True
+	started = False
+
+	while run:
+		draw(win, grid, ROWS, width)
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				run = False
+
+			if started:
+				continue # Preventing the user to make input to the program after the algorithm starts searching
+
+			if pygame.mouse.get_pressed()[0]: # Left mouse button
+				pos = pygame.mouse.get_pos()
+				row, col = get_clicked_pos(pos, ROWS, width)
+				spot = grid[row][col]
+				
+				if not start:
+					start = spot
+					start.make_start()
+
+				elif not end:
+					end = spot
+					end.make_end()
+
+				elif spot != end and spot != start:
+					spot.make_barrier()
+
+			elif pygame.mouse.get_pressed()[2]: # Right mouse button				
+				pass
+
+	pygame.quit()
+
+
+main(WIN, WIDTH)
