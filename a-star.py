@@ -106,7 +106,7 @@ def reconstruct_path(came_from, current, draw):
 
 def algorithm(draw, grid, start, end):
 	count = 0
-	open_set = PriorityQueue() # We cant check whats in the queue
+	open_set = PriorityQueue() # We cant check whats in the queue even though we can insert and pop spots from the queue
 	open_set.put((0, count, start))
 	came_from = {}
 	g_score = {spot: float("inf") for row in grid for spot in row} # assigning the g_score to infinite for every spot in the grid
