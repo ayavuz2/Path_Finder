@@ -59,7 +59,7 @@ class Spot:
 		self.clor = RED
 
 	def make_open(self):
-		self.color == GREEN
+		self.color = GREEN
 
 	def make_barrier(self):
 		self.color = BLACK
@@ -74,7 +74,18 @@ class Spot:
 		pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.width))
 
 	def update_neighbors(self, grid):
-		pass
+		
+		if self.row < self.total_rows - 1 and not grid[self.row + 1][self.col].is_barrier(): # Down
+			self.neighbors.append(grid[self.row + 1][self.col])
+
+		if self.row > 0 and not grid[self.row - 1][self.col].is_barrier(): # Up
+			self.neighbors.append(grid[self.row - 1][self.col])
+
+		if self.col < self.total_rows - 1 and not grid[self.row][self.col + 1].is_barrier(): # Left
+			self.neighbors.append(grid[self.row][self.col + 1])
+
+		if self.row > 0 and not grid[self.row][self.col - 1].is_barrier(): # Right
+			self.neighbors.append(grid[self.row][self.col - 1])
 
 	def __lt__(self, other):
 		return False
@@ -153,11 +164,11 @@ def main(win, width):
 				row, col = get_clicked_pos(pos, ROWS, width)
 				spot = grid[row][col]
 				
-				if not start:
+				if not start and spot != end:
 					start = spot
 					start.make_start()
 
-				elif not end:
+				elif not end and spot != start:
 					end = spot
 					end.make_end()
 
@@ -165,7 +176,19 @@ def main(win, width):
 					spot.make_barrier()
 
 			elif pygame.mouse.get_pressed()[2]: # Right mouse button				
-				pass
+				pos = pygame.mouse.get_pos()
+				row, col = get_clicked_pos(pos, ROWS, width)
+				spot = grid[row][col]
+				spot.reset()
+				if spot == start:
+					start = None
+				elif spot == end:
+					end = None
+
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_SPACE and not started:
+					pass
+
 
 	pygame.quit()
 
